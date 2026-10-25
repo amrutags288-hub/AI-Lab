@@ -1,62 +1,39 @@
-
-class SimpleReflexVacuumAgent:
-    def __init__(self):
-        self.location = "A"
-        self.percept_sequence = []
-        self.actions = []
-
-    def add_percept(self, location, is_dirty):
-        self.percept_sequence.append((location, is_dirty))
-
-    def add_action(self, action):
-        self.actions.append(action)
-
-    def execute_actions(self):
-        for action in self.actions:
-            percept = self.percept_sequence.pop(0)
-            print(f"Percept: {percept} - Action: {action}")
-
-            if action == "Suck":
-                print("Vacuuming dirt.")
-
-            elif action == "MoveLeft":
-                self.location = "A"
-                print("Moving left to location A.")
-
-            elif action == "MoveRight":
-                self.location = "B"
-                print("Moving right to location B.")
-
-            elif action == "DoNothing":
-                print("Doing nothing.")
+def reflex_agent(location, status):
+    if status == "Dirty":
+        return "Suck"
+    elif location == "A":
+        return "Right"
+    else:
+        return "Left"
 
 
-def simple_reflex_vacuum_agent(percept_sequence):
-    agent = SimpleReflexVacuumAgent()
+# Initial Environment
+environment = {
+    "A": "Dirty",
+    "B": "Dirty"
+}
 
-    for percept in percept_sequence:
-        location, is_dirty = percept
-        agent.add_percept(location, is_dirty)
+location = "A"
 
-        if is_dirty:
-            agent.add_action("Suck")
-        else:
-            if location == "A":
-                agent.add_action("MoveRight")
-            elif location == "B":
-                agent.add_action("MoveLeft")
+print("Initial Environment:", environment)
 
-    return agent
+while True:
+    status = environment[location]
+    action = reflex_agent(location, status)
 
+    print(f"\nLocation: {location}")
+    print(f"Status  : {status}")
+    print(f"Action  : {action}")
 
-# Example percept sequence
-percept_sequence = [
-    ("A", True),
-    ("A", False),
-    ("B", True),
-    ("B", False)
-]
+    if action == "Suck":
+        environment[location] = "Clean"
 
-# Create and run the agent
-agent = simple_reflex_vacuum_agent(percept_sequence)
-agent.execute_actions()
+    elif action == "Right":
+        location = "B"
+
+    elif action == "Left":
+        location = "A"
+    if environment["A"] == "Clean" and environment["B"] == "Clean":
+        print("\nFinal Environment:", environment)
+        print("Goal Achieved: Both rooms are clean.")
+        break
